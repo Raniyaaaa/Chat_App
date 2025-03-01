@@ -20,6 +20,7 @@ const Login = () => {
       
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.user.id);
+      alert(response.data.message);
       navigate("/dashboard");
     } catch (error) {
       alert("Login failed");
