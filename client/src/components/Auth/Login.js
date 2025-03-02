@@ -1,59 +1,34 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/auth/login`,
-        formData
-      );
-      console.log(response.data);
-      
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.user.id);
-      alert(response.data.message);
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`, { email, password });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem("userId", res.data.userId);
+      localStorage.setItem("userName", res.data.userName);
       navigate("/dashboard");
     } catch (error) {
-      alert("Login failed");
+      alert("Login failed. Check credentials.");
     }
   };
 
   return (
-    <div className="container">
+    <div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-        />
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
         <button type="submit">Login</button>
-
+        <p>Don't have an account? <a href="/signup">Signup</a></p>
       </form>
-      <p className="form-text">
-        <a href="/forgot-password">Forgot Password?</a>
-      </p>
-      <p className="form-text">
-        Don't have an account? <a href="/signup">Signup</a>
-      </p>
     </div>
   );
 };

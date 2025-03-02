@@ -2,13 +2,15 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const sequelize = require('./utils/database');
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/authRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/auth", authRoutes);
-
+app.use("/chat", chatRoutes);
 
 sequelize
   .sync()

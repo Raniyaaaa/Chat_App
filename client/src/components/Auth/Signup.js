@@ -1,76 +1,38 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-function Signup() {
+const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [number,setNumber] = useState("")
+  const [number, setNumber] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_BASE_URL}/auth/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password ,number}),
-        }
-      );
-      const data = await response.json();
-      if (response.ok) {
-        alert("Signup successful! Please login.");
-        navigate("/login");
-      } else {
-        alert(data.error || "Signup failed");
-      }
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/signup`, { username, email, password, number });
+      alert("Signup successful! Please login.");
+      navigate("/");
     } catch (error) {
-      alert("An error occurred. Please try again.");
+      alert("Signup failed.");
     }
   };
 
   return (
-    <div className="form-container">
-      <h1 className="form-title">Signup</h1>
-      <form onSubmit={handleSubmit} className="auth-form">
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Phone Number"
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        
+    <div>
+      <h2>Signup</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
+        <input type="number" value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Phone Number" required />
         <button type="submit">Signup</button>
+        <p>Already have an account? <a href="/">Login</a></p>
       </form>
-      <p className="form-text">
-        Already have an account? <a href="/login">Login</a>
-      </p>
     </div>
   );
-}
+};
 
 export default Signup;
