@@ -15,7 +15,7 @@ const Dashboard = () => {
     } else {
       setUser(storedUser);
       fetchMessages();
-      const interval = setInterval(fetchMessages, 2000);
+      const interval = setInterval(fetchMessages, 1000);
       return () => clearInterval(interval);
     }
   }, [navigate]);
@@ -64,9 +64,13 @@ const Dashboard = () => {
           messages.map((msg, index) => (
             <p key={index} className="message">
                 <strong>
-                    {localStorage.getItem("userId") == msg.userId ? "You: " : msg.User?.username + ": "}
+                  {localStorage.getItem("userId") == msg.userId 
+                    ? "You: " 
+                    : msg.User?.username 
+                    ? msg.User.username + ": " 
+                    : "..."}
                 </strong>
-                {msg.text}
+              {msg.text}
             </p>
           ))
         )}
