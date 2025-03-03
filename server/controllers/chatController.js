@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Message = require("../models/Message");
 const User = require("../models/User");
 
@@ -19,14 +20,25 @@ exports.sendMessage = async (req, res) => {
 
 exports.getMessages = async (req, res) => {
     try {
-        const messages = await Message.findAll({
-            include: [{ model: User, attributes: ["username"] }],
+        const { lastMessageId } = req.query;
+        let messages;
+        if (lastMessageId) {
+            messages = await Message.findAll({
+                where: { id: { [Op.gt]: lastMessageId } }, 
+                include: [{ model: User, attributes: ["username"] }],
+                order: [["createdAt", "ASC"]],
+            });
+        } else {
+            messages = await Message.findAll({
+                include: [{ model: User, attributes: ["username"] }],
+                order: [["createdAt", "DESC"]],
+                limit: 10, 
+            });
 
-            order: [["createdAt", "ASC"]],
-        });
+            messages = messages.reverse(); 
+        }
 
-        
-        res.status(200).json({ messages});
+        res.status(200).json({ messages });
     } catch (error) {
         console.error("Error fetching messages:", error);
         res.status(500).json({ error: "Internal Server Error" });

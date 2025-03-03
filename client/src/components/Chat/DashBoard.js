@@ -4,7 +4,6 @@ import axios from "axios";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
@@ -13,17 +12,29 @@ const Dashboard = () => {
     if (!storedUser) {
       navigate("/");
     } else {
-      setUser(storedUser);
-      fetchMessages();
+      loadMessages();
       const interval = setInterval(fetchMessages, 1000);
       return () => clearInterval(interval);
     }
   }, [navigate]);
 
-  const fetchMessages = async () => {
+  const loadMessages = () => {
+    const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+    setMessages(storedMessages);
+    fetchMessages(storedMessages);
+  };
+
+  const fetchMessages = async (storedMessages = []) => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/chat/messages`);
-      setMessages(res.data.messages);
+      const lastMessageId = storedMessages.length > 0 ? storedMessages[storedMessages.length - 1].id : 0;
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/chat/messages?lastMessageId=${lastMessageId}`);
+
+      if(res.data.messages.length > 0){
+        const updatedMessages = [...storedMessages, ...res.data.messages];
+        const recentMessages = updatedMessages.slice(-10);
+        setMessages(recentMessages);
+        localStorage.setItem("chatMessages", JSON.stringify(recentMessages));
+      }
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -41,15 +52,23 @@ const Dashboard = () => {
               },
             }
         );
-      setMessages((prev) => [...prev, res.data]);
-      setNewMessage("");
+        setMessages((prev) => {
+          const updatedMessages = [...prev, res.data];
+          const recentMessages = updatedMessages.slice(-10);
+          localStorage.setItem("chatMessages", JSON.stringify(recentMessages));
+          return recentMessages;
+        });
+        setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("chatMessages");
     navigate("/");
   };
 
