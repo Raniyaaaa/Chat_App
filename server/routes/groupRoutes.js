@@ -3,7 +3,7 @@ const {
   createGroup,
   addUser,
   removeUser,
-  assignAdmin,
+  makeAdmin,
   leaveGroup,
   deleteGroup,
   getUserGroups,
@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/create",authMiddleware, createGroup);
 router.post("/addUser",authMiddleware, addUser);
 router.post("/removeUser",authMiddleware, removeUser);
-router.post("/assignAdmin", authMiddleware,assignAdmin);
+router.post("/makeAdmin", authMiddleware,makeAdmin);
 router.post("/leave",authMiddleware, leaveGroup);
 router.delete("/delete",authMiddleware, deleteGroup);
 router.get("/userGroups/:userId",authMiddleware, getUserGroups);

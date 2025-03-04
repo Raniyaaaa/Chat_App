@@ -35,4 +35,7 @@ GroupMessage.belongsTo(User, { foreignKey: "senderId" });
 User.hasMany(Chat, { foreignKey: "senderId", onDelete: "CASCADE" });
 User.hasMany(Chat, { foreignKey: "receiverId", onDelete: "CASCADE" });
 
+User.belongsToMany(Group, { through: GroupUser, foreignKey: "userId" });
+Group.belongsToMany(User, { through: GroupUser, foreignKey: "groupId" });
+
 module.exports = { sequelize, User, Group, GroupUser, Chat, GroupMessage };

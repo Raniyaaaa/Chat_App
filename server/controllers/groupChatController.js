@@ -1,5 +1,6 @@
 const GroupMessage = require("../models/GroupMessage");
 const GroupUser = require("../models/GroupUser");
+const User = require('../models/User')
 // Fetch all messages for a group
 exports.getGroupMessages = async (req, res) => {
   try {
@@ -8,9 +9,29 @@ exports.getGroupMessages = async (req, res) => {
     const messages = await GroupMessage.findAll({
       where: { groupId },
       order: [["createdAt", "ASC"]],
+      include: [
+        {
+          model: User,
+          attributes: ["name"],
+        },
+      ],
+      raw: true, // Flattens the result (removes nested objects)
+      nest: true, // Keeps the nested structure for User
     });
 
-    res.json(messages);
+    console.log(messages);
+
+    // Format response
+    const formattedMessages = messages.map((msg) => ({
+      id: msg.id,
+      groupId: msg.groupId,
+      senderId: msg.senderId,
+      senderName: msg.User.name,
+      message: msg.message,
+      createdAt: msg.createdAt,
+    }));
+
+    res.json(formattedMessages);
   } catch (error) {
     console.error("Error fetching group messages:", error);
     res.status(500).json({ error: "Failed to fetch messages" });

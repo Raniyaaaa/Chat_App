@@ -33,17 +33,10 @@ exports.createGroup = async (req, res) => {
 // Add user to group (Admins only)
 exports.addUser = async (req, res) => {
   try {
-    const { groupId, userId, adminId } = req.body;
-
-    const isAdmin = await GroupUser.findOne({
-      where: { groupId, userId: adminId, isAdmin: true },
-    });
-    
-    if (!isAdmin)
-      return res.status(403).json({ error: "Only admins can add users" });
+    const { groupId, userId } = req.body;
 
     await GroupUser.create({ groupId, userId });
-    res.json({ message: "User added to group" });
+    res.json();
   } catch (error) {
     res.status(500).json({ error: "Error adding user" });
   }
@@ -52,17 +45,10 @@ exports.addUser = async (req, res) => {
 // Remove user from group (Admins only)
 exports.removeUser = async (req, res) => {
   try {
-    const { groupId, userId, adminId } = req.body;
-
-   const isAdmin = await GroupUser.findOne({
-     where: { groupId, userId: adminId, isAdmin: true },
-   });
-    
-    if (!isAdmin)
-      return res.status(403).json({ error: "Only admins can remove users" });
+    const { groupId, userId } = req.body;
 
     await GroupUser.destroy({ where: { groupId, userId } });
-    res.json({ message: "User removed from group" });
+    res.json();
   } catch (error) {
     console.log(error.message);
     
@@ -70,27 +56,19 @@ exports.removeUser = async (req, res) => {
   }
 };
 
-// Assign Admin
-exports.assignAdmin = async (req, res) => {
+// Make Admin
+exports.makeAdmin = async (req, res) => {
   try {
-    const { groupId, userId, adminId } = req.body;
-
-    const isAdmin = await GroupUser.findOne({
-      where: { groupId, userId: adminId, isAdmin: true },
-    });
-    if (!isAdmin)
-      return res
-        .status(403)
-        .json({ error: "Only admins can assign new admins" });
+    const { groupId, userId } = req.body;
+    console.log(req.body)
 
     await GroupUser.update({ isAdmin: true }, { where: { groupId, userId } });
-    res.json({ message: "Admin assigned" });
+    res.json();
   } catch (error) {
     res.status(500).json({ error: "Error assigning admin" });
   }
 };
 
-// Leave Group
 exports.leaveGroup = async (req, res) => {
   try {
     const { groupId, userId } = req.body;
@@ -112,13 +90,12 @@ exports.leaveGroup = async (req, res) => {
       }
     }
 
-    res.json({ message: "User left the group" });
+    res.json();
   } catch (error) {
     res.status(500).json({ error: "Error leaving group" });
   }
 };
 
-// Delete Group (Admins only)
 exports.deleteGroup = async (req, res) => {
   try {
     const { groupId, adminId } = req.body;
@@ -175,6 +152,9 @@ exports.getGroupUsers = async (req, res) => {
       include: [{ model: User, attributes: ["id", "name"] }],
     });
 
+    const admins = groupUsers
+      .filter((gu) => gu.isAdmin) // Filter out admins
+      .map((admin) => admin.userId);
     // Extract user IDs from group users
     const groupUserIds = groupUsers.map((groupUser) => groupUser.userId);
 
@@ -189,8 +169,10 @@ exports.getGroupUsers = async (req, res) => {
       groupUsers: groupUsers.map((gu) => ({
         id: gu.User.id,
         name: gu.User.name,
+        isAdmin: gu.isAdmin,
       })),
-      nonGroupUsers, // Users not in the group
+      nonGroupUsers,
+      adminId: admins, // Users not in the group
     });
   } catch (error) {
     console.error("Error fetching group users:", error);

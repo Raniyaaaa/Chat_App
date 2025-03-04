@@ -19,7 +19,7 @@ app.use("/groupChat", groupChatRoutes);
 app.use("/users", userRoutes);
 
 sequelize
-  .sync({force: true})
+  .sync()
   .then(() => {
     console.log("Database synchronized");
     app.listen(8000, () => console.log("Server running on port 8080"));
