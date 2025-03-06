@@ -18,7 +18,7 @@ router.post("/addUser",authMiddleware, addUser);
 router.post("/removeUser",authMiddleware, removeUser);
 router.post("/makeAdmin", authMiddleware,makeAdmin);
 router.post("/leave",authMiddleware, leaveGroup);
-router.delete("/delete",authMiddleware, deleteGroup);
+router.delete("/delete/:groupId",authMiddleware, deleteGroup);
 router.get("/userGroups/:userId",authMiddleware, getUserGroups);
 router.get("/groupUsers/:groupId",authMiddleware, getGroupUsers);
 module.exports = router;

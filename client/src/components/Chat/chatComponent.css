@@ -89,9 +89,9 @@
 /* Message Bubble Styles */
 .message {
     max-width: 60%;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+    padding: 5px 15px;
+    margin-bottom: 5px;
+    
     font-size: 14px;
     display: inline-block;
     word-wrap: break-word;
@@ -100,11 +100,14 @@
 .sent {
     background: #dcf8c6;
     align-self: flex-end;
+    border-radius: 15px 15px 0px 15px;
+
 }
 
 .received {
     background: white;
     align-self: flex-start;
+    border-radius: 15px 15px 15px 0px;
 }
 
 .received .sender-name {
@@ -115,11 +118,10 @@
 }
 
 .message small {
-    display: block;
-    font-size: 12px;
+    display: block; /* Changed from block */
+    font-size: 10px;
     color: gray;
     text-align: right;
-    margin-top: 3px;
 }
 
 /* Input Box */
@@ -130,6 +132,7 @@
     border-top: 1px solid #ccc;
 }
 
+
 .message-input input {
     flex: 1;
     padding: 10px;
@@ -138,6 +141,10 @@
     outline: none;
     border-radius: 25px;
     background: #f0f2f5;
+    transition: background 0.3s ease
+}
+.message-input input:hover {
+    background: rgb(227, 225, 225);
 }
 
 .message-input button {
@@ -149,6 +156,7 @@
     cursor: pointer;
     border-radius: 25px;
     transition: 0.3s;
+    transition: background 0.5s ease
 }
 
 .message-input button:hover {

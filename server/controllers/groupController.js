@@ -98,13 +98,7 @@ exports.leaveGroup = async (req, res) => {
 
 exports.deleteGroup = async (req, res) => {
   try {
-    const { groupId, adminId } = req.body;
-
-    const isAdmin = await GroupUser.findOne({
-      where: { groupId, userId: adminId, isAdmin: true },
-    });
-    if (!isAdmin)
-      return res.status(403).json({ error: "Only admins can delete groups" });
+    const { groupId } = req.params;
 
     await GroupMessage.destroy({ where: { groupId } });
     await GroupUser.destroy({ where: { groupId } });
@@ -125,6 +119,7 @@ exports.getUserGroups = async (req, res) => {
         {
           model: GroupUser,
           where: { userId },
+          attributes: ["isAdmin"],
           include: [
             {
               model: User,
@@ -134,7 +129,7 @@ exports.getUserGroups = async (req, res) => {
         },
       ],
     });
-
+    console.log(groups);
     res.json({ groups });
   } catch (error) {
     console.error("Error fetching user groups:", error.message);
