@@ -60,8 +60,6 @@ exports.removeUser = async (req, res) => {
 exports.makeAdmin = async (req, res) => {
   try {
     const { groupId, userId } = req.body;
-    console.log(req.body)
-
     await GroupUser.update({ isAdmin: true }, { where: { groupId, userId } });
     res.json();
   } catch (error) {
@@ -129,7 +127,6 @@ exports.getUserGroups = async (req, res) => {
         },
       ],
     });
-    console.log(groups);
     res.json({ groups });
   } catch (error) {
     console.error("Error fetching user groups:", error.message);

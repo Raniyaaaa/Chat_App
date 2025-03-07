@@ -19,8 +19,6 @@ exports.getGroupMessages = async (req, res) => {
       nest: true, // Keeps the nested structure for User
     });
 
-    console.log(messages);
-
     // Format response
     const formattedMessages = messages.map((msg) => ({
       id: msg.id,

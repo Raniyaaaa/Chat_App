@@ -10,7 +10,6 @@ exports.getAllUsers = async (req, res) => {
       where: { id: { [Op.ne]: userId } }, // Exclude the logged-in user
       attributes: ["id", "name", "email", "number"], // Exclude password
     });
-    console.log(users);
     res.json(users);
   } catch (error) {
     console.error("Error fetching users:", error.message);
