@@ -337,6 +337,38 @@ const ChatComponent = () => {
 
     return (
         <div className="chat-container">
+            <div className="sidebar">
+                <div className="chat-head">
+                    <h4>Chats</h4>
+                    <BiEditAlt onClick={() => setShowAdd(true)} />
+                </div>
+                <div className="chat-list">
+                    {users.map((user) => (
+                        <div
+                            key={user.id}
+                            className="chat-person"
+                            onClick={() => handleChatSelection(user)}
+                        >
+                            {user.name}
+                        </div>
+                    ))}
+                    {groups.map((group) => (
+                        <div 
+                            key={group.id} 
+                            className="chat-person"
+                            onClick={() => setSelectedChat({ id: group.id, name: group.name, type: "group" })}
+                        >
+                            {group.name}
+                            <BiEdit 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditGroup(group);
+                                }} 
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
             <div className="chat-window">
                 {selectedChat ? (
                     <>
@@ -349,19 +381,19 @@ const ChatComponent = () => {
                                 <div key={index} className={`message ${msg.senderId == userId ? "sent" : "received"}`}>
                                     {msg.senderId != userId && <p className="sender-name">{msg.senderName}</p>}
                                     {msg.message.startsWith("http") ? (
-    /\.(jpeg|jpg|gif|png)$/i.test(msg.message.split("?")[0]) ? (  // Remove query params before checking extension
-        <img src={msg.message} alt="Sent Image" style={{ maxWidth: "200px", borderRadius: "5px" }} />
-    ) : /\.(mp4|webm|ogg)$/i.test(msg.message.split("?")[0]) ? (
-        <video controls style={{ maxWidth: "250px", borderRadius: "5px" }}>
-            <source src={msg.message} type="video/mp4" />
-            Your browser does not support the video tag.
-        </video>
-    ) : (
-        <a href={msg.message} target="_blank" rel="noopener noreferrer">📎 Download File</a>
-    )
-) : (
-    <p>{msg.message}</p>
-)}
+                                        /\.(jpeg|jpg|gif|png)$/i.test(msg.message.split("?")[0]) ? (  // Remove query params before checking extension
+                                        <img src={msg.message} alt="Sent Image" style={{ maxWidth: "200px", borderRadius: "5px" }} />
+                                        ) : /\.(mp4|webm|ogg)$/i.test(msg.message.split("?")[0]) ? (
+                                        <video controls style={{ maxWidth: "250px", borderRadius: "5px" }}>
+                                        <source src={msg.message} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                        </video>
+                                        ) : (
+                                        <a href={msg.message} target="_blank" rel="noopener noreferrer">📎 Download File</a>
+                                        )
+                                    ) : (
+                                        <p>{msg.message}</p>
+                                    )}
 
 
                                     <small>{formatTime(msg.createdAt)}</small>
@@ -394,3 +426,5 @@ const ChatComponent = () => {
 };
 
 export default ChatComponent;
+
+

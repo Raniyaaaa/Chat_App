@@ -8,6 +8,8 @@ const groupRoutes = require('./routes/groupRoutes');
 const groupChatRoutes = require('./routes/groupChatRoutes');
 const userRoutes = require('./routes/userRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const archiveRoutes = require('./routes/archiveRoutes');
+require("./cron/archiveCron");
 
 const app = express();
 app.use(cors());
@@ -19,6 +21,7 @@ app.use("/group", groupRoutes);
 app.use("/groupChat", groupChatRoutes);
 app.use("/users", userRoutes);
 app.use("/upload", uploadRoutes);
+app.use("/archive", archiveRoutes);
 
 sequelize
   .sync()
